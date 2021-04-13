@@ -241,6 +241,11 @@ namespace ts {
                 return visitNode(cbNode, (<PipelineHackExpression>node).argument) ||
                     visitNode(cbNode, (<PipelineHackExpression>node).barGreaterThanToken) ||
                     visitNode(cbNode, (<PipelineHackExpression>node).expression);
+            case SyntaxKind.PipelineApplicationExpression:
+                return visitNode(cbNode, (<PipelineApplicationExpression>node).argument) ||
+                    visitNode(cbNode, (<PipelineApplicationExpression>node).barGreaterThanToken) ||
+                    visitNode(cbNode, (<PipelineApplicationExpression>node).expression) ||
+                    visitNodes(cbNode, cbNodes, (<PipelineApplicationExpression>node).typeArguments) ;
             case SyntaxKind.TaggedTemplateExpression:
                 return visitNode(cbNode, (<TaggedTemplateExpression>node).tag) ||
                     visitNode(cbNode, (<TaggedTemplateExpression>node).questionDotToken) ||
@@ -4444,10 +4449,24 @@ namespace ts {
             );
         }
 
+        function parsePipelineApplicationExpression(leftOperand: Expression): Expression {
+            return finishNode(
+                factory.createPipelineApplicationExpression(
+                    parseBinaryExpressionOrHigher(/*precedence*/ 1),
+                    /*typeArguments*/ undefined,
+                    leftOperand
+                ),
+                leftOperand.pos
+            );
+        }
+
         function parseConditionalExpressionRest(startLeftOperand: Expression, pos: number): Expression {
             let leftOperand = startLeftOperand;
             while (parseOptionalToken(SyntaxKind.BarGreaterThanToken)) {
                 leftOperand = parsePipelineHackExpression(leftOperand);
+            }
+            while (false) {
+                leftOperand = parsePipelineApplicationExpression(leftOperand);
             }
 
             // Note: we are passed in an expression which was produced from parseBinaryExpressionOrHigher.

@@ -248,6 +248,7 @@ namespace ts {
         ElementAccessExpression,
         CallExpression,
         PipelineHackExpression,
+        PipelineApplicationExpression,
         NewExpression,
         TaggedTemplateExpression,
         TypeAssertionExpression,
@@ -2350,6 +2351,14 @@ namespace ts {
         readonly dummyDeclaration: Declaration;
     }
 
+    export interface PipelineApplicationExpression extends LeftHandSideExpression, Declaration {
+        readonly kind: SyntaxKind.PipelineApplicationExpression;
+        readonly expression: Expression;
+        readonly typeArguments?: NodeArray<TypeNode>;
+        readonly argument: Expression;
+        readonly barGreaterThanToken: BarGreaterThanToken;
+    }
+
     export interface CallChain extends CallExpression {
         _optionalChainBrand: any;
     }
@@ -2456,6 +2465,7 @@ namespace ts {
         | NewExpression
         | TaggedTemplateExpression
         | Decorator
+        | PipelineApplicationExpression
         | JsxOpeningLikeElement
         ;
 
@@ -7137,6 +7147,8 @@ namespace ts {
         updateMetaProperty(node: MetaProperty, name: Identifier): MetaProperty;
         createPipelineHackExpression(expression: Expression, argument: Expression): PipelineHackExpression;
         updatePipelineHackExpression(node: PipelineHackExpression, expression: Expression, argument: Expression): PipelineHackExpression;
+        createPipelineApplicationExpression(expression: Expression, typeArguments: readonly TypeNode[] | undefined, argument: Expression): PipelineApplicationExpression;
+        updatePipelineApplicationExpression(node: PipelineApplicationExpression, expression: Expression, typeArguments: readonly TypeNode[] | undefined, argument: Expression): PipelineApplicationExpression;
 
         //
         // Misc
