@@ -6456,6 +6456,12 @@ namespace ts {
                             visitTypeNodeList(node.typeArguments),
                             visitExpressionList(node.arguments));
 
+                    case SyntaxKind.PipelineHackExpression:
+                        Debug.type<PipelineHackExpression>(node);
+                        return factory.updatePipelineHackExpression(node,
+                            visitExpression(node.expression),
+                            visitExpression(node.argument));
+
                     case SyntaxKind.NewExpression:
                         Debug.type<NewExpression>(node);
                         return factory.updateNewExpression(node,

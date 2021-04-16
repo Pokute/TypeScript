@@ -221,6 +221,7 @@ namespace ts {
         "&&=": SyntaxKind.AmpersandAmpersandEqualsToken,
         "??=": SyntaxKind.QuestionQuestionEqualsToken,
         "@": SyntaxKind.AtToken,
+        "#": SyntaxKind.HashToken,
         "`": SyntaxKind.BacktickToken
     }));
 
@@ -2041,12 +2042,20 @@ namespace ts {
                             if (ch === CharacterCodes.backslash) {
                                 tokenValue += scanIdentifierParts();
                             }
+                            return token = SyntaxKind.PrivateIdentifier;
                         }
                         else {
                             tokenValue = "#";
-                            error(Diagnostics.Invalid_character);
+                            if (/*isInsidePipelineHack*/ false) {
+                                error(Diagnostics.Invalid_character /* Hack placeholder token outside pipeline. */);
+                            }
+                            else {
+                                if ((pos >= 2) && (text.charCodeAt(pos - 2) === CharacterCodes.dot)) {
+                                    return token = SyntaxKind.PrivateIdentifier;
+                                }
+                            }
+                            return token = SyntaxKind.Identifier;
                         }
-                        return token = SyntaxKind.PrivateIdentifier;
                     default:
                         const identifierKind = scanIdentifier(ch, languageVersion);
                         if (identifierKind) {
