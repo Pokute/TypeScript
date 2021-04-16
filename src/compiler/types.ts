@@ -1950,6 +1950,11 @@ namespace ts {
         | LogicalOperator
         ;
 
+    export type PipelineOperatorOrHigher
+        = LogicalOperatorOrHigher
+        | SyntaxKind.BarGreaterThanToken
+        ;
+
     // see: https://tc39.github.io/ecma262/#prod-AssignmentOperator
     export type CompoundAssignmentOperator =
         | SyntaxKind.PlusEqualsToken
@@ -1979,6 +1984,7 @@ namespace ts {
     export type AssignmentOperatorOrHigher =
         | SyntaxKind.QuestionQuestionToken
         | LogicalOperatorOrHigher
+        | PipelineOperatorOrHigher
         | AssignmentOperator
         ;
 
